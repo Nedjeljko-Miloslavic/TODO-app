@@ -1,0 +1,251 @@
+:root{
+	--light_gray: hsl(0, 0%, 98%);
+	--light_grayish_blue: hsl(236, 33%, 92%);
+	--light_blue: hsl(233, 11%, 84%);
+	--light_dark_blue: hsl(236, 9%, 61%);
+	--light_blue_2: hsl(235, 19%, 35%);
+	
+	--dark_blue: hsl(235, 21%, 11%);
+	--dark_desaturated_blue: hsl(235, 24%, 19%);
+	--dark_grayish_blue_1: hsl(234, 39%, 85%);
+	--dark_grayish_blue_2_hover: hsl(236, 33%, 92%);
+	--dark_grayish_blue_3: hsl(234, 11%, 52%);
+	--dark_grayish_blue_4: hsl(233, 14%, 35%);
+	--dark_grayish_blue_5: hsl(237, 14%, 26%);
+	
+	--bright_blue: hsl(220, 98%, 61%);
+	--linear_gradient_1: hsl(192, 100%, 67%);  
+	--linear_gradient_2: hsl(280, 87%, 65%);
+}
+
+
+*{
+	font-family: 'Josefin Sans', sans-serif;
+	box-sizing:border-box;
+}
+
+body{
+	width:100vw;
+	background-image:url("images/bg-desktop-dark.jpg");
+	background-repeat:no-repeat;
+	background-color:var(--dark_blue);
+}
+
+header{
+	width:500px;
+	margin:auto;
+	display:flex;
+	justify-content:space-between;
+	padding-top:80px;
+}
+
+#title{
+	color:white;
+	font-size:35px;
+	text-transform:uppercase;
+	font-weight:700;
+	letter-spacing:14px;
+}
+
+#images img:nth-child(2){
+	position:relative;
+	left:-50%;
+	visibility:hidden;
+}
+
+.card{
+	width:500px;
+	margin:auto;
+	background-color:var(--dark_desaturated_blue);
+	padding:12px;
+	border-radius:5px;
+	display:flex;
+	color:var(--dark_grayish_blue_1);
+	align-items:center;
+	align-content:space-around;
+	flex-direction:row;
+	position:relative;
+}
+
+
+
+.card span{
+	width:80%;
+	line-height:25px;
+	padding-top:12px;
+	padding-bottom:12px;
+}
+
+.card .x{
+	height:19px;
+	width:19px;
+	background-image:url("images/icon-cross.svg");
+	background-position:1px 1px;
+	margin-left:20px;
+}
+
+
+#input{
+	margin-top:20px;
+}
+
+.circle{
+	height:20px;
+	width:20px;
+	display:inline-block;
+	border-radius:10px;
+	border:solid 1px var(--dark_grayish_blue_5);
+	margin-right:20px;
+	background-repeat:no-repeat;
+}
+
+.circle:hover:not(#input .circle){
+	cursor:pointer;
+}
+
+.card span:hover{
+	cursor:grab;
+}
+
+
+
+
+
+input{
+	background-color:var(--dark_desaturated_blue);
+	border:0;
+	outline:none;
+	color:var(--dark_grayish_blue_3);
+	width:100%;
+	font-size:18px;
+}
+
+
+#flex_container{
+	display:flex;
+	flex-direction:column;
+	margin-top:20px;
+}
+
+#flex_container .card{
+	border-radius:0;
+	border-bottom:var(--dark_grayish_blue_5) solid 1px;
+	padding-top:0;
+	padding-bottom:0;
+}
+
+#flex_container .card:nth-child(1){
+	border-radius:5px 5px 0px 0px;
+}
+
+#footer{
+	width:500px;
+	margin:auto;
+	background-color:var(--dark_desaturated_blue);
+	padding:12px;
+	border-radius:0px 0px 5px 5px;
+	display:flex;
+	color:var(--dark_grayish_blue_3);
+	align-items:center;
+	align-content:space-around;
+	flex-direction:row;
+	position:relative;
+	justify-content:space-between;
+}
+
+#footer div{
+	font-size:12px;
+	
+}
+
+#footer #switch{
+	display:flex;
+}
+
+#footer #switch span{
+	display:inline-block;
+}
+
+#footer #switch span:nth-child(2){
+	margin:0px 20px;
+}
+
+#footer #switch span:hover, #clear:hover{
+	cursor:pointer;
+	color:var(--dark_grayish_blue_1);
+}
+
+.invisible{
+	display:none;
+}
+
+.delete{
+	display:none;
+}
+
+
+
+
+
+.gradient{
+	background-image:linear-gradient(var(--linear_gradient_1), var(--linear_gradient_2));
+}
+
+.line_through{
+	text-decoration:line-through;
+	color:var(--dark_grayish_blue_3);
+}
+
+
+.attribution { font-size: 11px; text-align: center; }
+.attribution a { color: hsl(228, 45%, 44%); }
+  
+
+/*
+# Front-end Style Guide
+
+## Layout
+
+The designs were created to the following widths:
+
+- Mobile: 375px
+- Desktop: 1440px
+
+## Colors
+
+### Primary
+
+- Bright Blue: hsl(220, 98%, 61%)
+- Check Background: linear-gradient hsl(192, 100%, 67%) to hsl(280, 87%, 65%)
+
+### Neutral
+
+### Light Theme
+
+- Very Light Gray: hsl(0, 0%, 98%)
+- Very Light Grayish Blue: hsl(236, 33%, 92%)
+- Light Grayish Blue: hsl(233, 11%, 84%)
+- Dark Grayish Blue: hsl(236, 9%, 61%)
+- Very Dark Grayish Blue: hsl(235, 19%, 35%)
+
+### Dark Theme
+
+- Very Dark Blue: hsl(235, 21%, 11%)
+- Very Dark Desaturated Blue: hsl(235, 24%, 19%)
+- Light Grayish Blue: hsl(234, 39%, 85%)
+- Light Grayish Blue (hover): hsl(236, 33%, 92%)
+- Dark Grayish Blue: hsl(234, 11%, 52%)
+- Very Dark Grayish Blue: hsl(233, 14%, 35%)
+- Very Dark Grayish Blue: hsl(237, 14%, 26%)
+
+## Typography
+
+### Body Copy
+
+- Font size: 18px
+
+### Font
+
+- Family: [Josefin Sans](https://fonts.google.com/specimen/Josefin+Sans)
+- Weights: 400, 700
+*/
