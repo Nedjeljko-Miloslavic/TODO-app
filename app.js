@@ -1,310 +1,435 @@
+//CLASSES-------------------------------
 
-const input = document.querySelector("input");
-const flex_container = document.querySelector("#flex_container");
-var circles_checked = [false];
-var card_array = [];
-var images_array = [2];
-var span_array;
-var drag = false;
-var grab_start;
-var item_counter = document.querySelector("#footer #items span");
-
-
-input.oninput = ()=>{
-	input.style.color = "var(--dark_grayish_blue_1)";
-	if(input.value == ""){
-		input.style.color = "var(--dark_grayish_blue_3)";
-	}
-}
-
-input.onkeypress = (event)=>{
-	if(event.key=="Enter" && input.value != ""){
-		
-		var circle = document.createElement("div");
-		var span = document.createElement("span");
-		var span_2 = document.createElement("div");
-		
-		span_2.setAttribute("class", "x");
-		circle.setAttribute("class", "circle");
-		var card = document.createElement("div");
-		
-		card.setAttribute("class", "card");
-		span.innerHTML = input.value;
-		flex_container.appendChild(card);
-		card.appendChild(circle);
-		card.appendChild(span);
-		card.appendChild(span_2);
-		
-	
-		circles_checked.push(false);
-		var circles_array = [];
-		circles_array = document.querySelectorAll(".circle");
-		span_array = document.querySelectorAll(".card span");
-		card.style.order = span_array.length;
-		
-		var img = document.createElement("img");
-		img.setAttribute("src", "images/icon-check.svg");
-		img.setAttribute("alt","check_icon");
-		img.style = "position:relative; left:3px;";
-		images_array.push(img);
-		
-		var i = circles_array.length - 1;
-		var j = span_array.length - 1;
-		var new_card = document.querySelectorAll("#flex_container .card")[j];
-		
-		//----------Deleting-------
-		
-		delete_item(j);
-		
-		
-		
-		//line-through---------------------------------------
-		
-		circles_array[i].addEventListener("click", ()=>{
-			if(circles_checked[i]==false){
-				circles_array[i].appendChild(images_array[i]);
-				circles_array[i].classList.add("gradient");
-				circles_checked[i] = true;
-				card_array[i-1].card_dom.classList.add("line_through");
-			}else{
-				circles_array[i].removeChild(images_array[i]);
-				circles_array[i].classList.remove("gradient");
-				circles_checked[i] = false;
-				card_array[i-1].card_dom.classList.remove("line_through");
-			}
-			
-		});
-		
-		
-		//------grabbing--------------------------------------
-		
-		add_new_card(new_card);
-		grab(j);
-		
-		card_array.forEach(card=>{
-			card.update(card.card_dom.getBoundingClientRect().top);
-		});
-		
-			
-		
-	}
-	
-	
-};
-
-//---------Controling visibility-----------
-document.querySelector("#switch span:nth-child(2)").onclick = ()=>{
-	for(let i=0; i<card_array.length; i++){
-		card_array[i].card_dom.classList.remove("invisible");
-	}
-	var completed = document.querySelectorAll(".line_through");
-	for(let i=0; i<completed.length; i++){
-		completed[i].classList.add("invisible");
-	}
-}
-
-document.querySelector("#switch span:nth-child(3)").onclick = ()=>{
-	for(let i=0; i<card_array.length; i++){
-		card_array[i].card_dom.classList.remove("invisible");
-	}
-	var active = document.querySelectorAll("#flex_container .card:not(.line_through)");
-	for(let i=0; i<active.length; i++){
-		active[i].classList.add("invisible");
-	}
-}
-
-document.querySelector("#switch span:nth-child(1)").onclick = ()=>{
-	for(let i=0; i<card_array.length; i++){
-		card_array[i].card_dom.classList.remove("invisible");
-	}
-}
-
-
-
-//-------------Class---------------------
 class Card{
-	constructor(card_dom, order, height, position){
-		this.card_dom = card_dom;
-		this.order = order;
-		this.position = position;
-		this.height = height;
+	constructor(span){
+		this.span = span;
+		this.top = undefined;
+		this.height = undefined;
+		this.order = undefined;
+		this.mid = undefined;
+		this.drag = false;
+		this.move = 0;
 		this.click_position = undefined;
-		this.grab = false;
-		this.move = 0;
-		this.dif = 0;
-		this.mid = this.position + this.height/2;
-	}
-	
-	update(x){
-		this.position = x;
-		this.move = 0;
-		this.dif = 0;
-		this.mid = this.position + this.height/2;
-		this.click_position = this.mid;
-	}
-	
-}
-
-
-
-
-
-//__________FUNCTIONS_______________________________
-
-//------------Stop_drag----------
-function stop_drag(j){
-	card_array[j].grab = false;
-	card_array[j].card_dom.style.top = "0px";
-	card_array[j].card_dom.style.zIndex = "0";
-	card_array[j].card_dom.style.border = "0";
-	card_array[j].card_dom.style.borderBottom = "var(--dark_grayish_blue_5) solid 1px";
-	
-	for(let i=0; i<card_array.length; i++){
-		card_array[i].update(card_array[i].card_dom.getBoundingClientRect().top);
+		this.dif_mid_click = undefined;
+		this.completed = false;
 	}
 }
 
 
 
-//----------------GRABBING-------------------
-function grab(j){
-	span_array[j].addEventListener("mousedown", (event)=>{
-		card_array[j].click_position = event.clientY;
-		card_array[j].grab = true;
-		card_array[j].dif = card_array[j].click_position - card_array[j].mid;
-		card_array[j].card_dom.style.top = card_array[j].dif + "px";
-		card_array[j].card_dom.style.zIndex = "1";
-		card_array[j].card_dom.style.border = "2px solid blue";
-		order_cards();
-	});
+class Flex_container{
+	constructor(){
+		this.card_array = [];
+		this.card_dom_array = [];
+		this.position_array = [];
+		this.order_array = [];
+		this.dom = document.querySelector("#flex_container");
+		this.max_position = undefined;
+	}
 	
-	
-	span_array[j].addEventListener("mouseup", ()=>{
-		stop_drag(j);
-	});
-	
-	span_array[j].addEventListener("mouseout", ()=>{
-		stop_drag(j);
-	});
-	
-	
-	span_array[j].addEventListener("mousemove", (event)=>{
-		if(card_array[j].grab){
-			var move = event.clientY - card_array[j].click_position + card_array[j].dif;
-			if(card_array[j].order != 1 && move<=0){
-				card_array[j].move = move;
-				card_array[j].card_dom.style.top = card_array[j].move + "px";
-				
+	create_card_element(){
+		this.card_dom_array = [];
+		this.card_array.forEach(card=>{
+			var span = document.createElement("span");
+			span.innerHTML = card.span;
+			var circle = document.createElement("div");
+			circle.setAttribute("class", "circle");
+			var inner_circle = document.createElement("div");
+			inner_circle.setAttribute("class","inner_circle");
+			circle.appendChild(inner_circle);
+			var x = document.createElement("div");
+			x.setAttribute("class","x");
+			var card_dom = document.createElement("div");
+			card_dom.setAttribute("class", "card");
+			card_dom.appendChild(circle);
+			card_dom.appendChild(span);
+			card_dom.appendChild(x);
+			if(card.order){
+				card_dom.style.order = card.order;
 			}
-			if(card_array[j].order != card_array.length && move>=0){
-				card_array[j].move = move;
-				card_array[j].card_dom.style.top = card_array[j].move + "px";
+			this.card_dom_array.push(card_dom);
+		});
+		//reference to event listener function
+		init_event_listeners(this.card_dom_array);
+	}
+	
+	
+	append_to_dom(){
+		this.dom.innerHTML = "";
+		this.card_dom_array.forEach(card_dom=>{
+			this.dom.appendChild(card_dom);
+		});
+	}
+	
+	
+	determine_position(){
+		this.position_array = [];
+		this.card_dom_array.forEach(card_dom=>{
+			var position = card_dom.getBoundingClientRect().top;
+			this.position_array.push(position);
+		});
+		for(let i=0; i<this.position_array.length; i++){
+			this.card_array[i].top = this.position_array[i];
+			this.card_array[i].height = this.card_dom_array[i].getBoundingClientRect().height;
+			this.card_array[i].mid = this.card_array[i].top + this.card_array[i].height/2;
+		}
+		this.determine_max_position();
+	}
+	
+	determine_max_position(){
+		var max = this.position_array[0];
+		for(let i=0; i<this.position_array.length; i++){
+			if(max<this.position_array[i]){
+				max = this.position_array[i];
 			}
-			
-			
-			for(let i=0; i<card_array.length; i++){
-				if((event.clientY < card_array[i].mid && card_array[j].order>card_array[i].order) || (event.clientY > card_array[i].mid && card_array[j].order<card_array[i].order)){
-					if(event.clientY < card_array[i].mid && card_array[j].order>card_array[i].order){
-						var order_clone = card_array[j].order;
-						card_array[j].order = card_array[i].order;
-						card_array[i].order = order_clone;
-					}else{
-						var order_clone = card_array[j].order;
-						card_array[j].order = card_array[i].order;
-						card_array[i].order = order_clone;
-					}
-					
-					var position_clone = card_array[i].position;
-					card_array[i].position = card_array[j].position;
-					
-					card_array[i].mid = card_array[i].position + card_array[i].height/2;
-					
-					card_array[j].update(position_clone);
-					card_array[j].card_dom.style.top = 0+"px";
-					
-					card_array[j].card_dom.style.order = card_array[j].order;
-					card_array[i].card_dom.style.order = card_array[i].order;
-				
-					
-					//------------Setting the border radius of first card------
-					for(let i=0; i<card_array.length; i++){
-						if(card_array[i].order == 1){
-							card_array[i].card_dom.style.borderRadius = "5px 5px 0px 0px";
-						}else{
-							card_array[i].card_dom.style.borderRadius = "0px";
-						}
-					}
-					
+		}
+		this.max_position = max;
+	}
+	
+	order_by_position(){
+		this.order_array = [];
+		fill(this.order_array, 0, this.position_array.length);
+		var order = 1;
+		for(let i=0; i<this.position_array.length; i++){
+			var compare = 5000;
+			for(let j=0; j<this.position_array.length; j++){
+				if(this.position_array[j]<compare && this.position_array[j]!=0){
+					compare = this.position_array[j];
+				}
+			}
+			for(let j=0; j<this.position_array.length; j++){
+				if(this.position_array[j]==compare && this.position_array[j]!=0){
+					this.position_array[j] = 0;
+					this.order_array[j] = order;
+					order++;
 				}
 			}
 		}
-	});
+		for(let i=0; i<this.card_array.length; i++){
+			this.card_array[i].order = this.order_array[i];
+		}
+		this.determine_position();
+	}
+	
+	
 }
 
 
-function delete_item(j){
-	var x_array = document.querySelectorAll(".x");
-	var x = x_array[j];
-	x.onclick = (event)=>{
-		event.target.parentNode.remove();
-		var remaining_cards = document.querySelectorAll("#flex_container .card");
+
+
+
+//VARIABLES----------------------------------------
+const input = document.querySelector("input");
+var flex_container = new Flex_container();
+var item_visibility = "all";
+var items_left = document.querySelector("#items span");
+var body = document.body;
+var theme = "dark";
+var footer = document.querySelector("#footer");
+
+
+input.oninput = ()=>{
+	input_color();	
+}
+
+footer.style.visibility = "hidden";
+
+
+//ONKEYPRESS------------------------------------
+input.onkeypress = (event)=>{
+	if(event.key=="Enter" && input.value != ""){
+		window.scroll(0,0);
+		footer.style.visibility = "visible";
+		var card = new Card(input.value);
+		flex_container.card_array.push(card);
+		flex_container.create_card_element();
+		flex_container.append_to_dom();
+		flex_container.determine_position();
+		flex_container.order_by_position();
 		
-		card_array.forEach(card =>{
-			card.update(card.card_dom.getBoundingClientRect().top);
-			console.log(card);
+		set_border_radius();
+		make_line_through();
+		set_visibility();
+	}
+}
+
+
+function init_event_listeners(card_dom_array){
+//------------DRAGGING EVENT LISTENERS------------------------------------
+	for(let i=0; i<flex_container.card_dom_array.length; i++){
+		flex_container.card_dom_array[i].childNodes[1].addEventListener("mousedown", (event)=>{
+			var card_dom = flex_container.card_dom_array[i];
+			var card = flex_container.card_array[i];
+			if(card.drag == false){
+				card.click_position = event.clientY;
+				card.dif_mid_click = card.click_position - card.mid;
+				card.move = card.dif_mid_click;
+				moving(card,card_dom,event);
+				card.drag = true;
+				card_dom.style.zIndex = "1";
+				card_dom.style.transform = "scale(1.05,1.1)";
+				card_dom.style.border = "blue solid 2px";
+				card_dom.style.borderRadius = "10px";
+			}
 		});
-		order_cards();
-	}
-}
-
-function add_new_card(new_card){
-	var order = window.getComputedStyle(new_card).getPropertyValue("order")*1;
-	var height = new_card.getBoundingClientRect().height;
-	var position = new_card.getBoundingClientRect().top;
-	var card_class = new Card(new_card, order, height, position);
-	card_array.push(card_class);
-	item_counter.innerHTML = card_array.length+ " ";
-}
-
-
-function order_cards(){
-	let finished_order = [];
-	for(let i=0; i<card_array.length; i++){
-		finished_order.push(0);
-	}
-	let order = 1;
-	var order_array = [];
-	card_array.forEach(card=>{
-		order_array.push(card.position);
-	});
-	console.log(order_array);
-	for(let j=0; j<order_array.length; j++){
-		var compare = 1000;
-		for(let i=0; i<order_array.length; i++){
-			if(order_array[i]<compare && order_array[i]>0){
-				compare = order_array[i];
+		
+		flex_container.card_dom_array[i].childNodes[1].addEventListener("mouseup", (event)=>{
+			var card_dom = flex_container.card_dom_array[i];
+			var card = flex_container.card_array[i];
+			card.move = 0;
+			card_dom.style.top = "0px";
+			card.dif_mid_click = 0;
+			card_dom.style.zIndex = "0";
+			card.click_position = card.mid;
+			if(card.drag){
+				moving(card,card_dom,event);
 			}
-		}
-		for(let i=0; i<order_array.length; i++){
-			if(compare==order_array[i]){
-				finished_order[i] = order;
-				order_array[i] = 0;
-				order++;
+			card.drag = false;
+		});
+		
+		
+		flex_container.card_dom_array[i].childNodes[1].addEventListener("mouseout", (event)=>{
+			var card_dom = flex_container.card_dom_array[i];
+			var card = flex_container.card_array[i];
+			card.move = 0;
+			card_dom.style.top = "0px";
+			card.dif_mid_click = 0;
+			card.click_position = card.mid;
+			if(card.drag){
+				moving(card,card_dom,event);
 			}
+		});
+		
+		
+		
+		flex_container.card_dom_array[i].childNodes[1].addEventListener("mousemove", (event)=>{
+			var card_dom = flex_container.card_dom_array[i];
+			var card = flex_container.card_array[i];
+			if(card.drag){
+				var move = event.clientY - card.click_position + card.dif_mid_click;
+				card.move = move;
+				moving(card,card_dom,event);
+			}
+		});
+		
+		
+		
+		//DELETING--------------------------------
+		flex_container.card_dom_array[i].childNodes[2].addEventListener("click", (event)=>{
+			flex_container.card_array.splice(i,1);
+			flex_container.create_card_element();
+			flex_container.append_to_dom();
+			flex_container.determine_position();
+			flex_container.order_by_position();
+			make_line_through();
+			set_visibility();
+			set_border_radius();
+		});
+		
+		var clear = document.querySelector("#clear");
+		clear.addEventListener("click", ()=>{
+			for(let i=0; i<flex_container.card_array.length; i++){
+				if(flex_container.card_array[i].completed){
+					flex_container.card_array.splice(i,1);
+				}
+			}
+			flex_container.create_card_element();
+			flex_container.append_to_dom();
+			flex_container.determine_position();
+			flex_container.order_by_position();
+			make_line_through();
+			set_visibility();
+			set_border_radius();
+		});
+		
+		
+		
+		//SET_TO_COMPLETED-----------------------------
+		flex_container.card_dom_array[i].childNodes[0].addEventListener("click", event=>{
+			if(!flex_container.card_array[i].completed){
+				flex_container.card_array[i].completed = true;
+			}else{
+				flex_container.card_array[i].completed = false;
+			}
+			make_line_through();
+			items_left.innerHTML = document.querySelectorAll("#flex_container .card:not(.line_through)").length+" "; //setting the number of items left
+			set_visibility();
+		});
+	}
+}
+
+
+
+//CONTROLING_VISIBILITY-------------------------------
+document.querySelector("#switch span").addEventListener("click", (event)=>{
+	item_visibility = "all";
+	set_visibility();
+});
+
+document.querySelector("#switch span:nth-child(2)").addEventListener("click", (event)=>{
+	item_visibility = "active";
+	set_visibility();
+});
+
+document.querySelector("#switch span:nth-child(3)").addEventListener("click", (event)=>{
+	item_visibility = "completed";
+	set_visibility();
+});
+
+
+
+
+document.body.addEventListener("mouseup", ()=>{
+	for(let i=0; i<flex_container.card_array.length; i++){
+		flex_container.card_array[i].drag = false;
+		flex_container.card_dom_array[i].style.zIndex = "0";
+		flex_container.card_dom_array[i].style.transform = "";
+		flex_container.card_dom_array[i].style.border = "";		
+		set_border_radius();
+		
+	}
+});
+
+
+
+
+//CHANGING_BACKGROUND_-----------------------------
+var switch_to_light = document.querySelector("#images img");
+var switch_to_dark = document.querySelector("#images img:nth-child(2)");
+switch_to_light.onclick = ()=>{
+	theme = "light";
+	switch_to_dark.style.visibility = "visible";
+	switch_to_light.style.visibility = "hidden";
+	body.classList.add("light");
+}
+
+switch_to_dark.onclick = ()=>{
+	theme = "dark";
+	switch_to_dark.style.visibility = "hidden";
+	switch_to_light.style.visibility = "visible";
+	body.classList.remove("light");
+}
+
+
+
+
+
+
+//functions-------
+function set_visibility(){
+	var completed_cards = document.querySelectorAll(".line_through");
+	var active_cards = document.querySelectorAll("#flex_container .card:not(.line_through)");
+	items_left.innerHTML = active_cards.length+" "; //changing the number of items left
+	if(item_visibility=="active"){
+		completed_cards.forEach(card=>{
+			card.classList.add("invisible");
+		});
+		active_cards.forEach(card=>{
+			card.classList.remove("invisible");
+		});
+	}else if(item_visibility=="completed"){
+		completed_cards.forEach(card=>{
+			card.classList.remove("invisible");
+		});
+		active_cards.forEach(card=>{
+			card.classList.add("invisible");
+		});
+	}else{
+		completed_cards.forEach(card=>{
+			card.classList.remove("invisible");
+		});
+		active_cards.forEach(card=>{
+			card.classList.remove("invisible");
+		});
+	}
+	flex_container.order_by_position();
+	set_visibility_2();
+}
+
+function moving(card, card_dom, event){
+	if(card.order==1){
+		if(card.move>0){
+			card_dom.style.top = card.move + "px";
+			
+		}
+	}else if(card.top==flex_container.max_position){
+		if(card.move<0){
+			card_dom.style.top = card.move + "px";
+			
+		}
+	}else{
+		card_dom.style.top = card.move + "px";
+		
+	}
+	card.drag = true;
+	flex_container.determine_position();
+	flex_container.order_by_position();
+	for(let i=0; i<flex_container.card_dom_array.length; i++){
+		flex_container.card_dom_array[i].style.order = flex_container.card_array[i].order;
+	}
+}
+
+function fill(array, element, number){
+	for(let i=0; i<number; i++){
+		array.push(element);
+	}
+}
+
+function set_border_radius(){
+	for(let i=0; i<flex_container.card_array.length; i++){
+		if(flex_container.card_array[i].order == 1){
+			flex_container.card_dom_array[i].style.borderRadius = "5px 5px 0px 0px";
+			
+		}else{
+			flex_container.card_dom_array[i].style.borderRadius = "0";
 		}
 	}
-	console.log(finished_order);
-	
-	for(let i=0; i<card_array.length; i++){
-		if(finished_order[i]!=0){
-			card_array[i].order = finished_order[i];
+}
+
+function make_line_through(){
+	for(let i=0; i<flex_container.card_array.length; i++){
+		if(flex_container.card_array[i].completed){
+			flex_container.card_dom_array[i].classList.add("line_through");
+		}else{
+			flex_container.card_dom_array[i].classList.remove("line_through");
 		}
-		card_array[i].update(card_array[i].card_dom.getBoundingClientRect().top);
 	}
-	
-	
+}
+
+function input_color(){
+	if(theme=="dark"){
+		input.style.color = "var(--dark_grayish_blue_1)";
+		if(input.value == ""){
+			input.style.color = "var(--dark_grayish_blue_3)";
+		}
+	}else{
+		input.style.color = "var(--dark_grayish_blue_3)";
+		if(input.value == ""){
+			input.style.color = "var(--dark_grayish_blue_1)";
+		}
+	}
+}
+
+function set_visibility_2(){
+	let switch_dom = document.querySelectorAll("#switch span");
+	if(item_visibility=="all"){
+		switch_dom[0].classList.add("blue_color");
+		switch_dom[1].classList.remove("blue_color");
+		switch_dom[2].classList.remove("blue_color");
+	}else if(item_visibility=="active"){
+		switch_dom[1].classList.add("blue_color");
+		switch_dom[0].classList.remove("blue_color");
+		switch_dom[2].classList.remove("blue_color");
+	}else{
+		switch_dom[2].classList.add("blue_color");
+		switch_dom[0].classList.remove("blue_color");
+		switch_dom[1].classList.remove("blue_color");
+	}
 	
 }
+
+set_visibility_2();
+
 
 
 /*
