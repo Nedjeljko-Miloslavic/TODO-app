@@ -22,6 +22,7 @@
 *{
 	font-family: 'Josefin Sans', sans-serif;
 	box-sizing:border-box;
+	margin:0;
 }
 
 body{
@@ -29,7 +30,10 @@ body{
 	background-image:url("images/bg-desktop-dark.jpg");
 	background-repeat:no-repeat;
 	background-color:var(--dark_blue);
+	background-size:100vw 300px;
+	
 }
+
 
 header{
 	width:500px;
@@ -45,6 +49,10 @@ header{
 	text-transform:uppercase;
 	font-weight:700;
 	letter-spacing:14px;
+}
+
+#images:hover{
+	cursor:pointer;
 }
 
 #images img:nth-child(2){
@@ -69,6 +77,8 @@ header{
 
 
 
+
+
 .card span{
 	width:80%;
 	line-height:25px;
@@ -82,11 +92,13 @@ header{
 	background-image:url("images/icon-cross.svg");
 	background-position:1px 1px;
 	margin-left:20px;
+	cursor:pointer;
 }
 
 
 #input{
 	margin-top:20px;
+	
 }
 
 .circle{
@@ -111,6 +123,8 @@ header{
 
 
 
+
+
 input{
 	background-color:var(--dark_desaturated_blue);
 	border:0;
@@ -129,9 +143,13 @@ input{
 
 #flex_container .card{
 	border-radius:0;
-	border-bottom:var(--dark_grayish_blue_5) solid 1px;
+	box-shadow:0px 2px 5px rgba(60,60,60,0.7);
 	padding-top:0;
 	padding-bottom:0;
+}
+
+.card{
+	border-bottom:var(--dark_grayish_blue_5) solid 1px;
 }
 
 #flex_container .card:nth-child(1){
@@ -151,6 +169,8 @@ input{
 	flex-direction:row;
 	position:relative;
 	justify-content:space-between;
+	font-weight:700;
+	box-shadow:0px 2px 5px rgba(60,60,60,0.7);
 }
 
 #footer div{
@@ -183,7 +203,9 @@ input{
 	display:none;
 }
 
-
+.card_light{
+	color:var(--light_blue_2);
+}
 
 
 
@@ -197,9 +219,180 @@ input{
 }
 
 
-.attribution { font-size: 11px; text-align: center; }
+
+.line_through .circle{
+	background-image:linear-gradient(to right, var(--linear_gradient_1), var(--linear_gradient_2));
+}
+
+
+
+.inner_circle{
+	width:100%;
+	height:100%;
+	border-radius:50%;
+	background-image:url(images/icon-check.svg);
+	background-repeat:no-repeat;
+	background-position:center;
+	visibility:hidden;
+}
+
+.line_through .inner_circle{
+	visibility:visible;
+}
+
+
+.light{
+	background-color:white;
+	background-image:url(images/bg-desktop-light.jpg);
+}
+
+.light .circle{
+	border:solid 1px var(--light_blue);
+}
+
+.light .card{
+	background-color:white;
+	color:var(--light_blue_2);
+	border-bottom:1px solid var(--light_blue);
+}
+
+
+.light input{
+	background-color:white;
+	color:var(--dark_grayish_blue_1);
+}
+
+.light .line_through{
+	color:var(--light_blue);
+}
+
+.light #footer{
+	background-color:white;
+	color:var(--light_dark_blue);
+}
+
+.light #footer #switch span:hover{
+	color:var(--light_blue_2);
+}
+
+.light #footer #switch .blue_color{
+	color:rgb(50,0,200);
+}
+
+#footer #switch .blue_color{
+	color:rgb(100,100,250);
+}
+
+#drag{
+	color:var(--dark_desaturated_blue);
+	width:500px;
+	margin:auto;
+	text-align:center;
+	margin-top:30px;
+	margin-bottom:30px;
+	font-size:14px;
+}
+
+.light #drag{
+	color:var(--light_blue_2);
+}
+
+.attribution { font-size: 11px; left:30px; position:fixed; bottom:20px;}
 .attribution a { color: hsl(228, 45%, 44%); }
-  
+
+@media only screen and (max-width:550px){
+	body{
+		background-image:url(images/bg-mobile-dark.jpg);
+		background-size:100vw;
+	}
+	
+	.light{
+		background-image:url(images/bg-mobile-light.jpg);
+		background-size:100vw;
+	}
+	
+	.card{
+		width:90%;
+		padding:2.5vw;
+		box-shadow:0px 2px 5px rgba(60,60,60,0.7);
+	}
+	
+	header{
+		width:90%;
+	}
+	
+	#title{
+		font-size:6vw;
+	}
+	
+	.card span{
+		font-size:3vw;
+		padding:2vw;
+	}
+	
+	.card input{
+		font-size:3vw;
+	}
+	
+	.circle{
+		width:3.3vw;
+		height:3.3vw;
+	}
+	
+	.card .x{
+		height:3vw;
+		width:3vw;
+		background-position:-0.4vw -0.4vw;
+	}
+	
+	#footer{
+		width:90%;
+		flex-wrap:wrap;
+		background-color:rgba(0,0,0,0);
+		padding:0;
+		box-shadow:none;
+	}
+	
+	#footer div{
+		width:50%;
+		background-color:var(--dark_desaturated_blue);
+		padding:12px;
+	}
+	
+	#footer #items{
+		order:1;
+		border-radius:0 0 0 5px;
+		box-shadow:-2px 2px 2px 0.1px rgba(60,60,60,0.7);
+	}
+	
+	#footer #clear{
+		order:2;
+		text-align:right;
+		border-radius:0 0 5px 0;
+		box-shadow:2px 2px 2px 0.1px rgba(60,60,60,0.7);
+	}
+	
+	#footer #switch{
+		order:3;
+		margin-top:15px;
+		width:100%;
+		border-radius: 5px;
+		text-align:center;
+		display:flex;
+		justify-content:center;
+		font-size:3.5vw;
+		box-shadow:0px 2px 5px rgba(60,60,60,0.7);
+	}
+	
+	.light #footer div{
+		background-color:white;
+	}
+	
+	.light #footer{
+		background-color:rgba(0,0,0,0);
+	}
+	
+}
 
 /*
 # Front-end Style Guide
